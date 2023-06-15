@@ -1,9 +1,15 @@
-html
-
 <!DOCTYPE html>
 <html>
 <head>
   <style>
+    .page {
+      display: none;
+    }
+
+    .page.active {
+      display: block;
+    }
+
     #editor {
       border: 1px solid #ccc;
       padding: 10px;
@@ -28,21 +34,37 @@ html
   </style>
 </head>
 <body>
-  <div id="editor" contenteditable="true">
-    <p>Edit and add your content here.</p>
+  <div class="page active">
+    <div id="editor" contenteditable="true">
+      <p>Edit and add your content here.</p>
+    </div>
   </div>
-  
+
+  <div class="page">
+    <h2>Page 2</h2>
+    <p>This is the second page.</p>
+  </div>
+
   <div id="toolbar">
     <button onclick="formatText('bold')">Bold</button>
     <button onclick="formatText('italic')">Italic</button>
     <button onclick="formatText('underline')">Underline</button>
     <button onclick="addImage()">Add Image</button>
     <button onclick="addLink()">Add Link</button>
+    <button onclick="embedContent()">Embed Content</button>
     <button onclick="injectHTML()">Inject HTML</button>
+    <button onclick="injectJavaScript()">Inject JavaScript</button>
+    <button onclick="addButton()">Add Button</button>
+    <button onclick="addVideo()">Add Video</button>
     <button onclick="downloadHTML()">Download HTML</button>
+    <button onclick="goToNextPage()">Next Page</button>
+    <button onclick="goToPreviousPage()">Previous Page</button>
   </div>
 
   <script>
+    var currentPage = 0;
+    var pages = document.getElementsByClassName("page");
+
     function formatText(command) {
       document.execCommand(command, false, null);
     }
@@ -52,7 +74,7 @@ html
       if (imageUrl) {
         var img = document.createElement("img");
         img.src = imageUrl;
-        document.getElementById("editor").appendChild(img);
+        getCurrentPage().appendChild(img);
       }
     }
 
@@ -62,7 +84,16 @@ html
         var link = document.createElement("a");
         link.href = url;
         link.textContent = "Link";
-        document.getElementById("editor").appendChild(link);
+        getCurrentPage().appendChild(link);
+      }
+    }
+
+    function embedContent() {
+      var url = prompt("Enter the URL to embed:");
+      if (url) {
+        var embedContainer = document.createElement("div");
+        embedContainer.innerHTML = `<iframe src="${url}"></iframe>`;
+        getCurrentPage().appendChild(embedContainer);
       }
     }
 
@@ -73,8 +104,33 @@ html
         temp.innerHTML = html;
         var elements = temp.childNodes;
         for (var i = 0; i < elements.length; i++) {
-          document.getElementById("editor").appendChild(elements[i].cloneNode(true));
+          getCurrentPage().appendChild(elements[i].cloneNode(true));
         }
+      }
+    }
+
+    function injectJavaScript() {
+      var script = prompt("Enter the JavaScript code:");
+      if (script) {
+        var scriptElement = document.createElement("script");
+        scriptElement.textContent = script;
+        document.body.appendChild(scriptElement);
+      }
+    }
+
+    function addButton() {
+      var button = document.createElement("button");
+      button.textContent = "Button";
+      getCurrentPage().appendChild(button);
+    }
+
+    function addVideo() {
+      var videoUrl = prompt("Enter the URL of the video:");
+      if (videoUrl) {
+        var video = document.createElement("video");
+        video.src = videoUrl;
+        video.controls = true;
+        getCurrentPage().appendChild(video);
       }
     }
 
@@ -86,6 +142,22 @@ html
       document.body.appendChild(downloadLink);
       downloadLink.click();
       document.body.removeChild(downloadLink);
+    }
+
+    function goToNextPage() {
+      pages[currentPage].classList.remove("active");
+      currentPage = (currentPage + 1) % pages.length;
+      pages[currentPage].classList.add("active");
+    }
+
+    function goToPreviousPage() {
+      pages[currentPage].classList.remove("active");
+      currentPage = (currentPage - 1 + pages.length) % pages.length;
+      pages[currentPage].classList.add("active");
+    }
+
+    function getCurrentPage() {
+      return pages[currentPage];
     }
   </script>
 </body>
