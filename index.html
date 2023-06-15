@@ -1,0 +1,92 @@
+html
+
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    #editor {
+      border: 1px solid #ccc;
+      padding: 10px;
+      min-height: 200px;
+      margin-bottom: 20px;
+    }
+
+    #toolbar {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      background-color: rgba(0, 0, 0, 0.8);
+      padding: 10px;
+      color: #fff;
+      text-align: center;
+    }
+
+    #toolbar button {
+      margin-right: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div id="editor" contenteditable="true">
+    <p>Edit and add your content here.</p>
+  </div>
+  
+  <div id="toolbar">
+    <button onclick="formatText('bold')">Bold</button>
+    <button onclick="formatText('italic')">Italic</button>
+    <button onclick="formatText('underline')">Underline</button>
+    <button onclick="addImage()">Add Image</button>
+    <button onclick="addLink()">Add Link</button>
+    <button onclick="injectHTML()">Inject HTML</button>
+    <button onclick="downloadHTML()">Download HTML</button>
+  </div>
+
+  <script>
+    function formatText(command) {
+      document.execCommand(command, false, null);
+    }
+
+    function addImage() {
+      var imageUrl = prompt("Enter the URL of the image:");
+      if (imageUrl) {
+        var img = document.createElement("img");
+        img.src = imageUrl;
+        document.getElementById("editor").appendChild(img);
+      }
+    }
+
+    function addLink() {
+      var url = prompt("Enter the URL of the link:");
+      if (url) {
+        var link = document.createElement("a");
+        link.href = url;
+        link.textContent = "Link";
+        document.getElementById("editor").appendChild(link);
+      }
+    }
+
+    function injectHTML() {
+      var html = prompt("Enter the HTML code:");
+      if (html) {
+        var temp = document.createElement("div");
+        temp.innerHTML = html;
+        var elements = temp.childNodes;
+        for (var i = 0; i < elements.length; i++) {
+          document.getElementById("editor").appendChild(elements[i].cloneNode(true));
+        }
+      }
+    }
+
+    function downloadHTML() {
+      var editorContent = document.getElementById("editor").innerHTML;
+      var downloadLink = document.createElement("a");
+      downloadLink.href = "data:text/html;charset=utf-8," + encodeURIComponent(editorContent);
+      downloadLink.download = "index.html";
+      document.body.appendChild(downloadLink);
+      downloadLink.click();
+      document.body.removeChild(downloadLink);
+    }
+  </script>
+</body>
+</html>
