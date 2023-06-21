@@ -2,12 +2,9 @@
 <html>
 <head>
   <style>
-    .page {
-      display: none;
-    }
-
-    .page.active {
-      display: block;
+    body {
+      background: url("default-background.jpg") no-repeat center center fixed;
+      background-size: cover;
     }
 
     #editor {
@@ -23,26 +20,89 @@
       left: 0;
       width: 100%;
       background-color: rgba(0, 0, 0, 0.8);
-      padding: 10px;
       color: #fff;
-      text-align: center;
+      z-index: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 10px 0;
     }
 
     #toolbar button {
-      margin-right: 10px;
+      margin: 0 5px;
+      background-color: #4CAF50;
+      color: #fff;
+      border: none;
+      padding: 10px 20px;
+      font-size: 14px;
+      cursor: pointer;
+      border-radius: 4px;
+    }
+
+    #toolbar button:hover {
+      background-color: #45a049;
+    }
+
+    #page-content {
+      pointer-events: none;
+    }
+
+    #page-content.active {
+      pointer-events: auto;
+    }
+
+    .animated {
+      animation-duration: 1s;
+      animation-fill-mode: both;
+    }
+
+    @keyframes fly {
+      from {
+        transform: translate(0, 0);
+        opacity: 1;
+      }
+      to {
+        transform: translate(100px, -100px);
+        opacity: 0;
+      }
+    }
+
+    @keyframes jump {
+      0% {
+        transform: translateY(0);
+      }
+      50% {
+        transform: translateY(-50px);
+      }
+      100% {
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes slide-left {
+      from {
+        transform: translateX(0);
+      }
+      to {
+        transform: translateX(-100%);
+      }
+    }
+
+    @keyframes slide-right {
+      from {
+        transform: translateX(0);
+      }
+      to {
+        transform: translateX(100%);
+      }
     }
   </style>
 </head>
 <body>
-  <div class="page active">
-    <div id="editor" contenteditable="true">
+  <div id="page-content" class="active" contenteditable="true">
+    <div id="editor">
       <p>Edit and add your content here.</p>
     </div>
-  </div>
-
-  <div class="page">
-    <h2>Page 2</h2>
-    <p>This is the second page.</p>
   </div>
 
   <div id="toolbar">
@@ -59,11 +119,15 @@
     <button onclick="downloadHTML()">Download HTML</button>
     <button onclick="goToNextPage()">Next Page</button>
     <button onclick="goToPreviousPage()">Previous Page</button>
+    <button onclick="addAnimation('fly')">Fly</button>
+    <button onclick="addAnimation('jump')">Jump</button>
+    <button onclick="addAnimation('slide-left')">Slide Left</button>
+    <button onclick="addAnimation('slide-right')">Slide Right</button>
   </div>
 
   <script>
     var currentPage = 0;
-    var pages = document.getElementsByClassName("page");
+    var pages = [document.getElementById("page-content")];
 
     function formatText(command) {
       document.execCommand(command, false, null);
@@ -134,10 +198,29 @@
       }
     }
 
+    function addAnimation(animationName) {
+      var element = prompt("Enter the element's ID to apply the animation:");
+      if (element) {
+        var target = document.getElementById(element);
+        if (target) {
+          target.classList.add(animationName, "animated");
+        } else {
+          alert("Element not found.");
+        }
+      }
+    }
+
     function downloadHTML() {
-      var editorContent = document.getElementById("editor").innerHTML;
+      var html = document.documentElement.outerHTML;
+
+      // Remove the toolbar and other elements from the downloaded content
+      var content = document.getElementById("page-content").innerHTML;
+      html = html.replace(content, "");
+      html = html.replace('<div id="toolbar"', '<div id="made-by">Made by ZadeBuilder</div>');
+
+      // Create a download link and trigger the download
       var downloadLink = document.createElement("a");
-      downloadLink.href = "data:text/html;charset=utf-8," + encodeURIComponent(editorContent);
+      downloadLink.href = "data:text/html;charset=utf-8," + encodeURIComponent(html);
       downloadLink.download = "index.html";
       document.body.appendChild(downloadLink);
       downloadLink.click();
@@ -162,3 +245,4 @@
   </script>
 </body>
 </html>
+
