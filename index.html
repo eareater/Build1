@@ -218,10 +218,6 @@
       html = html.replace(content, "");
       html = html.replace('<div id="toolbar"', '<div id="made-by">Made by ZadeBuilder</div>');
 
-      // Remove toolbar buttons
-      var toolbar = document.getElementById("toolbar");
-      toolbar.parentNode.removeChild(toolbar);
-
       // Create a download link and trigger the download
       var downloadLink = document.createElement("a");
       downloadLink.href = "data:text/html;charset=utf-8," + encodeURIComponent(html);
