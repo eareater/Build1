@@ -30,8 +30,8 @@
 
     #toolbar button {
       margin: 0 5px;
-      background-color: #4CAF50;
-      color: #fff;
+      background-color: #fff;
+      color: #000;
       border: none;
       padding: 10px 20px;
       font-size: 14px;
@@ -40,7 +40,7 @@
     }
 
     #toolbar button:hover {
-      background-color: #45a049;
+      background-color: #ddd;
     }
 
     #page-content {
@@ -218,6 +218,10 @@
       html = html.replace(content, "");
       html = html.replace('<div id="toolbar"', '<div id="made-by">Made by ZadeBuilder</div>');
 
+      // Remove toolbar buttons
+      var toolbar = document.getElementById("toolbar");
+      toolbar.parentNode.removeChild(toolbar);
+
       // Create a download link and trigger the download
       var downloadLink = document.createElement("a");
       downloadLink.href = "data:text/html;charset=utf-8," + encodeURIComponent(html);
@@ -245,4 +249,3 @@
   </script>
 </body>
 </html>
-
